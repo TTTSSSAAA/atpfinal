@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ATP Final 間違い探しゲーム</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    #game-image {
+      max-width: 100%;
+      cursor: crosshair;
+      border: 2px solid #ccc;
+    }
+    #message, #timer {
+      font-size: 1.2em;
+      margin-top: 10px;
+    }
+    #message {
+      color: #333;
+    }
+    #timer {
+      font-weight: bold;
+      color: #d9534f;
+    }
+  </style>
+</head>
+<body>
+  <h1>ATP Final 間違い探しチャレンジ</h1>
+  <p>ATP Finalの試合結果に関する画像から間違いを探そう！</p>
+  <div id="timer">残り時間: 60秒</div>
+  <img id="game-image" src="atp-final-image.jpg" alt="ATP Final 間違い探し画像">
+  <div id="message">画像をクリックして間違いを探してください！</div>
+
+  <script>
+    const mistakes = [
+      // ここに間違いの座標を追加（例: { x: 120, y: 80 }）
+    ];
+    const tolerance = 30;
+    let timeLeft = 60;
+    let timerId;
+    let gameOver = false;
+
+    function updateTimer() {
+      document.getElementById("timer").textContent = `残り時間: ${timeLeft}秒`;
+      if (timeLeft <= 0) {
+        clearInterval(timerId);
+        gameOver = true;
+        document.getElementById("message").textContent = "時間切れ！ゲームオーバー！";
+      }
+      timeLeft--;
+    }
+
+    timerId = setInterval(updateTimer, 1000);
+
+    document.getElementById("game-image").addEventListener("click", function(e) {
+      if (gameOver) return;
+
+      const rect = e.target.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      let found = false;
+      for (const mistake of mistakes) {
+        const dx = x - mistake.x;
+        const dy = y - mistake.y;
+        if (Math.sqrt(dx * dx + dy * dy) < tolerance) {
+          found = true;
+          break;
+        }
+      }
+
+      const message = document.getElementById("message");
+      if (found) {
+        message.textContent = "正解！";
+      } else {
+        message.textContent = "違います。もう一度挑戦してみてください！";
+      }
+    });
+  </script>
+</body>
+</html>
